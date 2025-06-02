@@ -1,6 +1,8 @@
 {
   "name": "chat-with-geogebra",
   "version": "0.2.4",
+  "description": "通过聊天辅助GeoGebra绘图的桌面应用",
+  "author": "天增 赵",
   "private": true,
   "type": "module",
   "main": "electron/main.js",
