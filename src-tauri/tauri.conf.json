@@ -36,6 +36,36 @@
     ],
     "category": "Education",
     "copyright": "© 2024 天增 赵",
-    "shortDescription": "通过聊天辅助GeoGebra绘图的桌面应用"
+    "shortDescription": "通过聊天辅助GeoGebra绘图的桌面应用",
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": "",
+      "wix": {
+        "language": "zh-CN",
+        "template": null
+      },
+      "nsis": {
+        "displayLanguageSelector": true,
+        "languages": ["English", "SimpChinese"],
+        "installerIcon": "icons/icon.ico",
+        "installMode": "perMachine",
+        "allowDowngrades": false,
+        "createDesktopShortcut": true,
+        "createStartMenuShortcut": true
+      }
+    },
+    "macOS": {
+      "entitlements": null,
+      "exceptionDomain": "",
+      "frameworks": [],
+      "providerShortName": null,
+      "signingIdentity": null
+    },
+    "linux": {
+      "deb": {
+        "depends": []
+      }
+    }
   }
 }

@@ -24,6 +24,18 @@
 xcode-select --install
 ```
 
+### Windows 额外要求
+```powershell
+# 安装 Rust
+winget install Rustlang.Rustup
+
+# 安装 Visual Studio Build Tools 或 Visual Studio Community
+# 需要包含 "C++ build tools" 和 "Windows 10/11 SDK"
+
+# WebView2 (Windows 11通常已预装)
+# 如果没有，请从微软官网下载安装
+```
+
 ### Linux 额外要求
 ```bash
 # Ubuntu/Debian
@@ -53,6 +65,26 @@ pnpm tauri:build
 pnpm lint
 ```
 
+## 跨平台构建
+
+### 本地构建
+- **当前平台**: `pnpm tauri:build`
+- **Windows**: 需要在Windows系统上运行构建命令
+- **macOS**: 需要在macOS系统上运行构建命令  
+- **Linux**: 需要在Linux系统上运行构建命令
+
+### GitHub Actions自动构建（推荐）
+项目配置了GitHub Actions，可以自动为所有平台构建：
+
+1. 推送代码到GitHub
+2. GitHub Actions会自动构建Windows、macOS、Linux版本
+3. 构建完成后可在Actions页面下载对应平台的安装包
+
+支持的构建产物：
+- **Windows**: `.exe` 安装程序 (NSIS) + `.msi` 安装程序
+- **macOS**: `.dmg` 文件 (支持Intel和Apple Silicon)
+- **Linux**: `.AppImage` 可执行文件 + `.deb` 包
+
 ## 主要变化
 
 ### Electron → Tauri 迁移优势
@@ -78,21 +110,22 @@ pnpm lint
 ## 项目结构
 
 ```
-├── app/                    # Next.js App Router
-├── components/             # React组件
-├── hooks/                  # 自定义hooks
-├── lib/                    # 工具库
-├── public/                 # 静态资源
-├── src-tauri/             # Tauri Rust后端
-│   ├── src/               # Rust源码
-│   ├── icons/             # 应用图标
-│   ├── tauri.conf.json    # Tauri配置
-│   └── Cargo.toml         # Rust依赖
-├── styles/                # 样式文件
-├── utils/                 # 工具函数
-├── next.config.ts         # Next.js配置
-├── package.json           # 项目配置
-└── tailwind.config.ts     # Tailwind配置
+├── .github/workflows/     # GitHub Actions CI/CD
+├── app/                   # Next.js App Router
+├── components/            # React组件
+├── hooks/                 # 自定义hooks
+├── lib/                   # 工具库
+├── public/                # 静态资源
+├── src-tauri/            # Tauri Rust后端
+│   ├── src/              # Rust源码
+│   ├── icons/            # 应用图标
+│   ├── tauri.conf.json   # Tauri配置
+│   └── Cargo.toml        # Rust依赖
+├── styles/               # 样式文件
+├── utils/                # 工具函数
+├── next.config.ts        # Next.js配置
+├── package.json          # 项目配置
+└── tailwind.config.ts    # Tailwind配置
 ```
 
 ## 功能特性
@@ -102,6 +135,7 @@ pnpm lint
 - 🤖 AI辅助绘图功能（集成AI SDK）
 - 📱 响应式设计
 - 🎯 TypeScript类型安全
+- 🌍 跨平台支持（Windows、macOS、Linux）
 
 ## 开发指南
 
@@ -119,14 +153,24 @@ pnpm lint
 ## 构建和分发
 
 ```bash
-# 构建所有平台（需要对应平台环境）
+# 构建当前平台
 pnpm tauri:build
 
 # 构建结果位置
-# macOS: src-tauri/target/release/bundle/macos/
-# Windows: src-tauri/target/release/bundle/msi/
-# Linux: src-tauri/target/release/bundle/appimage/
+# Windows: src-tauri/target/release/bundle/nsis/ (.exe)
+#          src-tauri/target/release/bundle/msi/ (.msi)
+# macOS:   src-tauri/target/release/bundle/macos/ (.app)
+#          src-tauri/target/release/bundle/dmg/ (.dmg)
+# Linux:   src-tauri/target/release/bundle/appimage/ (.AppImage)
+#          src-tauri/target/release/bundle/deb/ (.deb)
 ```
+
+### 发布流程
+
+1. 更新版本号：`src-tauri/tauri.conf.json` 和 `package.json`
+2. 提交并推送代码
+3. 创建Git标签：`git tag v0.2.4 && git push origin v0.2.4`
+4. GitHub Actions自动构建并创建Release
 
 ## 贡献
 
