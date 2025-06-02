@@ -41,18 +41,9 @@
       "certificateThumbprint": null,
       "digestAlgorithm": "sha256",
       "timestampUrl": "",
-      "wix": {
-        "language": "zh-CN",
-        "template": null
-      },
       "nsis": {
-        "displayLanguageSelector": true,
-        "languages": ["English", "SimpChinese"],
         "installerIcon": "icons/icon.ico",
-        "installMode": "perMachine",
-        "allowDowngrades": false,
-        "createDesktopShortcut": true,
-        "createStartMenuShortcut": true
+        "installMode": "perMachine"
       }
     },
     "macOS": {

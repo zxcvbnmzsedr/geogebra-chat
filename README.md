@@ -63,119 +63,123 @@ pnpm tauri:build
 
 # 代码检查
 pnpm lint
+
+# 查看Tauri环境信息
+pnpm tauri info
 ```
 
 ## 跨平台构建
 
-### 本地构建
-- **当前平台**: `pnpm tauri:build`
-- **Windows**: 需要在Windows系统上运行构建命令
-- **macOS**: 需要在macOS系统上运行构建命令  
-- **Linux**: 需要在Linux系统上运行构建命令
+### 🎯 **推荐方案：使用GitHub Actions**
 
-### GitHub Actions自动构建（推荐）
-项目配置了GitHub Actions，可以自动为所有平台构建：
+1. **推送代码到GitHub**：
+   ```bash
+   git add .
+   git commit -m "Update to Tauri"
+   git push origin main
+   ```
 
-1. 推送代码到GitHub
-2. GitHub Actions会自动构建Windows、macOS、Linux版本
-3. 构建完成后可在Actions页面下载对应平台的安装包
+2. **发布版本**（触发自动构建）：
+   ```bash
+   git tag v0.2.5
+   git push origin v0.2.5
+   ```
 
-支持的构建产物：
-- **Windows**: `.exe` 安装程序 (NSIS) + `.msi` 安装程序
-- **macOS**: `.dmg` 文件 (支持Intel和Apple Silicon)
-- **Linux**: `.AppImage` 可执行文件 + `.deb` 包
+3. **GitHub Actions会自动构建**：
+   - 🪟 **Windows**: `.exe` 和 `.msi` 安装程序
+   - 🍎 **macOS**: `.dmg` 文件（Intel + Apple Silicon）
+   - 🐧 **Linux**: `.AppImage` 和 `.deb` 包
 
-## 主要变化
+### 💻 **本地构建**
 
-### Electron → Tauri 迁移优势
-
-1. **更小的包体积**：Tauri应用比Electron应用小得多
-2. **更低的内存使用**：使用系统原生WebView
-3. **更好的性能**：Rust后端提供更高效的系统集成
-4. **更强的安全性**：Tauri内置权限系统
-
-### 脚本变化
-
-| 旧命令 (Electron) | 新命令 (Tauri) |
-|-------------------|----------------|
-| `pnpm electron:dev` | `pnpm tauri:dev` |
-| `pnpm electron:pack` | `pnpm tauri:build` |
-
-### 配置文件变化
-
-- ❌ 移除：`electron/` 目录
-- ❌ 移除：`package.json` 中的 `build` 配置
-- ✅ 新增：`src-tauri/` 目录和相关配置
-
-## 项目结构
-
-```
-├── .github/workflows/     # GitHub Actions CI/CD
-├── app/                   # Next.js App Router
-├── components/            # React组件
-├── hooks/                 # 自定义hooks
-├── lib/                   # 工具库
-├── public/                # 静态资源
-├── src-tauri/            # Tauri Rust后端
-│   ├── src/              # Rust源码
-│   ├── icons/            # 应用图标
-│   ├── tauri.conf.json   # Tauri配置
-│   └── Cargo.toml        # Rust依赖
-├── styles/               # 样式文件
-├── utils/                # 工具函数
-├── next.config.ts        # Next.js配置
-├── package.json          # 项目配置
-└── tailwind.config.ts    # Tailwind配置
-```
-
-## 功能特性
-
-- 🚀 现代化的桌面应用框架（Tauri）
-- 🎨 现代化UI设计（Radix UI + Tailwind CSS）
-- 🤖 AI辅助绘图功能（集成AI SDK）
-- 📱 响应式设计
-- 🎯 TypeScript类型安全
-- 🌍 跨平台支持（Windows、macOS、Linux）
-
-## 开发指南
-
-### 添加新的Tauri命令
-
-1. 在 `src-tauri/src/main.rs` 中定义Rust函数
-2. 在前端使用 `@tauri-apps/api` 调用
-
-### 调试
-
-- **前端调试**：在浏览器开发者工具中调试（Web版）
-- **桌面应用调试**：Tauri开发模式会自动打开开发者工具
-- **Rust后端调试**：使用 `println!` 或日志库
-
-## 构建和分发
-
+#### macOS (当前平台)
 ```bash
-# 构建当前平台
 pnpm tauri:build
-
-# 构建结果位置
-# Windows: src-tauri/target/release/bundle/nsis/ (.exe)
-#          src-tauri/target/release/bundle/msi/ (.msi)
-# macOS:   src-tauri/target/release/bundle/macos/ (.app)
-#          src-tauri/target/release/bundle/dmg/ (.dmg)
-# Linux:   src-tauri/target/release/bundle/appimage/ (.AppImage)
-#          src-tauri/target/release/bundle/deb/ (.deb)
+# 输出: src-tauri/target/release/bundle/dmg/GeoGebra Chat_0.2.4_aarch64.dmg
 ```
 
-### 发布流程
+#### Windows (需要Windows机器)
+```powershell
+# 1. 安装必要工具
+winget install Rustlang.Rustup
+# 安装 Visual Studio Build Tools
 
-1. 更新版本号：`src-tauri/tauri.conf.json` 和 `package.json`
-2. 提交并推送代码
-3. 创建Git标签：`git tag v0.2.4 && git push origin v0.2.4`
-4. GitHub Actions自动构建并创建Release
+# 2. 克隆项目
+git clone <your-repo>
+cd geogebra-chat
+
+# 3. 构建
+pnpm install
+pnpm tauri:build
+```
+
+#### Linux
+```bash
+# 安装依赖
+sudo apt install libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+
+# 构建
+pnpm tauri:build
+```
+
+## 故障排除
+
+### Windows NSIS 配置错误
+如果遇到类似错误：
+```
+Error `tauri.conf.json` error on `bundle > windows > nsis`
+```
+
+**解决方案**：已修复配置文件，现在使用简化的NSIS配置：
+```json
+{
+  "windows": {
+    "nsis": {
+      "installerIcon": "icons/icon.ico",
+      "installMode": "perMachine"
+    }
+  }
+}
+```
+
+### 构建环境检查
+```bash
+# 检查环境配置
+pnpm tauri info
+
+# 验证Rust安装
+rustc --version
+cargo --version
+```
+
+## 从Electron迁移的优势
+
+| 特性 | Electron | Tauri |
+|------|----------|-------|
+| 包大小 | ~150MB | ~15MB |
+| 内存占用 | ~200MB | ~50MB |
+| 启动速度 | 较慢 | 很快 |
+| 系统资源 | 高 | 低 |
+| 安全性 | 中等 | 高 |
+| 跨平台 | ✅ | ✅ |
+
+## 技术架构
+
+```
+┌─────────────────┐    ┌─────────────────┐
+│   Next.js App   │    │   Tauri Core    │
+│   (Frontend)    │◄──►│   (Rust)        │
+│                 │    │                 │
+│ • React 19      │    │ • System APIs   │
+│ • TypeScript    │    │ • File System   │
+│ • Tailwind CSS  │    │ • Native OS     │
+└─────────────────┘    └─────────────────┘
+```
 
 ## 贡献
 
-欢迎提交Issue和Pull Request！
+欢迎提交 Issue 和 Pull Request！
 
 ## 许可证
 
-[MIT License](LICENSE)
+MIT License
