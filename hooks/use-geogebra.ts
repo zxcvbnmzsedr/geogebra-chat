@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState, useRef } from "react"
 import { logger } from "@/lib/logger"
+import { getGeoGebraConfig } from "@/lib/geogebra-config"
 
 export interface GeoGebraCommands {
   reset: () => void
@@ -23,9 +24,12 @@ export function useGeoGebra(): GeoGebraCommands {
     // 防止重复加载脚本
     if (scriptRef.current || appletInitializedRef.current) return
 
+    const config = getGeoGebraConfig()
+    logger.ggb(`使用GeoGebra配置: ${config.useLocal ? '本地资源' : '远程CDN'}`)
+
     const script = document.createElement("script")
     scriptRef.current = script
-    script.src = "https://www.geogebra.org/apps/deployggb.js"
+    script.src = config.deployScript
     script.async = true
     document.body.appendChild(script)
 
@@ -33,7 +37,7 @@ export function useGeoGebra(): GeoGebraCommands {
       logger.ggb("GeoGebra script 加载完成")
       if (typeof window.GGBApplet !== "undefined") {
         logger.ggb("GGBApplet 类可用，准备初始化")
-        const ggbAppParams = {
+        const ggbAppParams: any = {
           appName: "classic",
           width: "100%",
           height: "100%",
@@ -57,6 +61,12 @@ export function useGeoGebra(): GeoGebraCommands {
           },
         }
 
+        // 如果使用本地资源，添加本地路径配置
+        if (config.useLocal && config.resourcePath) {
+          ggbAppParams.path = config.resourcePath
+          logger.ggb(`使用本地资源路径: ${config.resourcePath}`)
+        }
+
         // Desktop GeoGebra
         if (document.getElementById("geogebra-container")) {
           logger.ggb("找到geogebra-container，注入GeoGebra applet")
@@ -68,6 +78,15 @@ export function useGeoGebra(): GeoGebraCommands {
         }
       } else {
         logger.error("GGBApplet 类不可用")
+      }
+    }
+
+    script.onerror = () => {
+      logger.error(`GeoGebra脚本加载失败: ${config.deployScript}`)
+      if (config.useLocal) {
+        logger.error("请检查本地GeoGebra资源是否存在于 /public/GeoGebra/ 目录")
+      } else {
+        logger.error("请检查网络连接或考虑使用本地资源")
       }
     }
 

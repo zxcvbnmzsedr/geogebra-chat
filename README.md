@@ -10,6 +10,25 @@ Fork from https://github.com/tiwe0/chat-with-geogebra.git
 - 💻 支持 Web 和桌面应用
 - 🎨 现代化的用户界面
 - 📱 响应式设计
+- 🔒 **内网支持** - 支持本地GeoGebra资源，无需外网访问
+
+## 🌐 GeoGebra 资源配置
+
+项目支持两种GeoGebra资源模式：
+
+### 🏠 本地模式（推荐用于内网环境）
+```bash
+# 创建 .env.local 文件
+echo "NEXT_PUBLIC_GEOGEBRA_MODE=local" > .env.local
+```
+
+### ☁️ 远程模式（需要外网访问）
+```bash
+# 创建 .env.local 文件
+echo "NEXT_PUBLIC_GEOGEBRA_MODE=remote" > .env.local
+```
+
+> 💡 **详细配置说明请查看 [GEOGEBRA_SETUP.md](./GEOGEBRA_SETUP.md)**
 
 ## 🚀 快速开始
 
@@ -63,11 +82,13 @@ pnpm electron:dist
 - **前端**: Next.js 15, React 19, TypeScript
 - **样式**: Tailwind CSS
 - **桌面**: Electron
+- **数学绘图**: GeoGebra (支持本地和远程资源)
 - **包管理**: pnpm
 
 ## 📖 详细文档
 
-更多桌面应用相关信息，请查看 [ELECTRON_README.md](./ELECTRON_README.md)
+- [桌面应用配置](./ELECTRON_README.md)
+- [GeoGebra本地资源配置](./GEOGEBRA_SETUP.md)
 
 ## 🤝 贡献
 
