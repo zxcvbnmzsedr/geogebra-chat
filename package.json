@@ -5,68 +5,18 @@
   "author": "天增 赵",
   "private": true,
   "type": "module",
-  "main": "electron/main.js",
-  "homepage": "./",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "electron": "concurrently \"pnpm dev\" \"wait-on http://localhost:3000 && electron .\"",
-    "electron:dev": "cross-env NODE_ENV=development pnpm electron",
-    "electron:start": "cross-env NODE_ENV=production pnpm electron",
-    "build:electron": "pnpm build && pnpm exec tsc electron/main.ts --outDir electron --target es2020 --module es2020 --moduleResolution node",
-    "electron:pack": "pnpm build:electron && electron-builder --publish=never",
-    "electron:dist": "pnpm build:electron && electron-builder --publish=always",
-    "postinstall": "electron-builder install-app-deps"
-  },
-  "build": {
-    "appId": "com.geogebra.chat",
-    "productName": "GeoGebra Chat",
-    "directories": {
-      "output": "dist"
-    },
-    "files": [
-      "electron/main.js",
-      "electron/preload.js",
-      "out/**/*",
-      "public/**/*"
-    ],
-    "mac": {
-      "category": "public.app-category.education",
-      "target": [
-        {
-          "target": "dmg",
-          "arch": ["x64", "arm64"]
-        }
-      ],
-      "icon": "public/icon.icns"
-    },
-    "win": {
-      "target": [
-        {
-          "target": "nsis",
-          "arch": ["x64"]
-        }
-      ],
-      "icon": "public/icon.ico"
-    },
-    "linux": {
-      "target": [
-        {
-          "target": "AppImage",
-          "arch": ["x64"]
-        }
-      ],
-      "icon": "public/icon.png",
-      "category": "Education"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true
-    }
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
   },
   "dependencies": {
+    "@ai-sdk/openai": "latest",
+    "@ai-sdk/react": "latest",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.4",
@@ -95,12 +45,15 @@
     "@radix-ui/react-toggle": "^1.1.1",
     "@radix-ui/react-toggle-group": "^1.1.1",
     "@radix-ui/react-tooltip": "^1.1.6",
+    "@tauri-apps/api": "^2.5.0",
+    "ai": "latest",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
     "date-fns": "4.1.0",
     "embla-carousel-react": "8.5.1",
+    "immer": "latest",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
     "next": "15.2.4",
@@ -109,35 +62,27 @@
     "react-day-picker": "8.10.1",
     "react-dom": "^19",
     "react-hook-form": "^7.54.1",
+    "react-markdown": "latest",
     "react-resizable-panels": "^2.1.7",
     "recharts": "2.15.0",
+    "rehype-katex": "latest",
+    "remark-gfm": "latest",
+    "remark-math": "latest",
     "sonner": "^1.7.1",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
+    "use-sync-external-store": "latest",
     "vaul": "^0.9.6",
     "zod": "^3.24.1",
-    "immer": "latest",
-    "use-sync-external-store": "latest",
-    "@ai-sdk/openai": "latest",
-    "ai": "latest",
-    "zustand": "latest",
-    "@ai-sdk/react": "latest",
-    "react-markdown": "latest",
-    "remark-math": "latest",
-    "rehype-katex": "latest",
-    "remark-gfm": "latest"
+    "zustand": "latest"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@tailwindcss/postcss": "^4",
+    "@tauri-apps/cli": "^2.5.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
     "tailwindcss": "^4",
-    "concurrently": "^9.1.2",
-    "cross-env": "7.0.3",
-    "electron": "^36.3.2",
-    "electron-builder": "^26.0.12",
-    "wait-on": "^8.0.3"
+    "typescript": "^5"
   }
 }
