@@ -55,6 +55,7 @@ export default function ChatPage() {
   const [configOpen, setConfigOpen] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
   const [localMessages, setLocalMessages] = useState<any[]>([])
+  const [isGeoGebraExpanded, setIsGeoGebraExpanded] = useState(false)
 
   // 当activeConversationId变化时，更新本地消息
   useEffect(() => {
@@ -205,6 +206,12 @@ export default function ChatPage() {
     setTemporaryError(`已执行${commands.length}条GeoGebra命令`)
   }, [messages, extractLatestCommands, executeCommands, setTemporaryError])
 
+  // 切换GeoGebra放大状态
+  const handleToggleGeoGebraExpand = useCallback(() => {
+    logger.info("切换GeoGebra放大状态", { current: isGeoGebraExpanded })
+    setIsGeoGebraExpanded(prev => !prev)
+  }, [isGeoGebraExpanded])
+
   return (
     <>
       <Head>
@@ -261,8 +268,14 @@ export default function ChatPage() {
           )}
           <div
             className={`${
-              isDesktop && showGeogebra ? "lg:w-[50%]" : "w-full"
-            } flex flex-row relative`}
+              isDesktop && showGeogebra 
+                ? isGeoGebraExpanded 
+                  ? "lg:w-[15%]" 
+                  : "lg:w-[50%]" 
+                : "w-full"
+            } flex flex-row relative ${
+              isDesktop && showGeogebra && isGeoGebraExpanded ? "lg:opacity-50" : ""
+            }`}
           >
             {/* Mobile view tabs */}
             <div className="lg:hidden w-full">
@@ -411,6 +424,8 @@ export default function ChatPage() {
             <GeoGebraPanel
               onHide={() => handleSetShowGeogebra(false)}
               onExecuteLatestCommands={executeLatestCommands}
+              onToggleExpand={handleToggleGeoGebraExpand}
+              isExpanded={isGeoGebraExpanded}
             />
           )}
         </div>
