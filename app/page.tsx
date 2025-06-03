@@ -3,7 +3,8 @@
 import type React from "react"
 
 import { useState, useEffect, useMemo, useCallback, useRef } from "react"
-import { useChat } from "@ai-sdk/react"
+// import { useChat } from "@ai-sdk/react"  // 注释掉原来的useChat
+import { useClientChat } from "@/hooks/use-client-chat"  // 使用新的客户端chat hook
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ChevronRight, Plus } from "lucide-react"
@@ -66,25 +67,21 @@ export default function ChatPage() {
 
   const chatConfig = useMemo(
     () => ({
-      configSettings: config,
+      modelType: config.modelType,
+      systemPrompt: config.systemPrompt,
+      apiKeys: config.apiKeys,
+      baseUrl: config.baseUrl,
     }),
     [config],
   )
 
   // 回调函数
   const onResponse = useCallback(
-    (response: Response) => {
+    (response: any) => {
       clearError()
 
       if (!response.ok) {
-        response
-          .json()
-          .then((data) => {
-            handleError(data.error || "请求处理失败，请检查API密钥和网络连接")
-          })
-          .catch((err) => {
-            handleError(err, "请求处理失败，请检查API密钥和网络连接")
-          })
+        handleError("请求处理失败，请检查API密钥和网络连接")
       }
     },
     [clearError, handleError],
@@ -107,7 +104,7 @@ export default function ChatPage() {
     [handleError],
   )
 
-  // 初始化聊天钩子
+  // 初始化聊天钩子 - 使用新的客户端hook
   const {
     messages,
     input,
@@ -115,10 +112,10 @@ export default function ChatPage() {
     handleSubmit,
     isLoading,
     error: chatError,
-  } = useChat({
+    setMessages,
+  } = useClientChat({
     id: activeConversationId,
-    api: "/api/chat",
-    body: chatConfig,
+    config: chatConfig,
     initialMessages,
     onResponse,
     onFinish: (message) => onFinish(message, messages),
